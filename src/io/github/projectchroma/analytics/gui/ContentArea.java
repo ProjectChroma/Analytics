@@ -14,7 +14,6 @@ import javax.swing.JTextField;
 import io.github.projectchroma.analytics.Analytics;
 import io.github.projectchroma.analytics.Log;
 import io.github.projectchroma.launcher.gui.util.BaseComponent;
-import io.github.projectchroma.launcher.gui.util.Spacer;
 
 public class ContentArea extends BaseComponent{
 	private static final long serialVersionUID = 1L;
@@ -88,9 +87,7 @@ public class ContentArea extends BaseComponent{
 					Analytics.log().write("Unable to load data: analytics data folder " + dataDir + " does not exist", Log.ERROR);
 					return;
 				}
-				for(File file : dataDir.listFiles((dir, name) -> name.matches("\\d+\\.dat"))){
-					Analytics.log().write("Loading file " + file, Log.DEBUG);
-				}
+				StatsView.instance.loadData(dataDir.listFiles((dir, name) -> name.matches("\\d+\\.dat")));
 			}
 		});
 		
@@ -99,6 +96,6 @@ public class ContentArea extends BaseComponent{
 		c.gridwidth = 3;
 		c.weightx = 1;
 		c.weighty = 24;
-		add(new Spacer(1, false), c);
+		add(StatsView.instance, c);
 	}
 }

@@ -23,7 +23,7 @@ public class LevelList extends BaseComponent{
 	public void setLevels(Iterable<Integer> levels){
 		while(getComponentCount() > 1) remove(getComponentCount()-1);
 		for(int level : levels) add(new CustomButton("Level " + level, buttonFont, () -> {parent.showLevel(level);}));
-		Analytics.log().write("Displaying levels" + levels, Log.DEBUG);
+		Analytics.log().write("Displaying levels " + levels, Log.DEBUG);
 		revalidate();
 		repaint();
 	}

@@ -14,10 +14,10 @@ import io.github.projectchroma.launcher.gui.util.BaseComponent;
 public class GraphArea extends BaseComponent{
 	private static final long serialVersionUID = 1L;
 	private static final int AXIS_WIDTH = 5, KEY_WIDTH = 50;
-	private List<Point> points = new ArrayList<>();
-	private int graphWidth = 0, graphHeight = 0;
+	private List<Point> wins = new ArrayList<>(), dWins = new ArrayList<>(), losses = new ArrayList<>(), dLosses = new ArrayList<>();
+	private int graphWidth = 0, graphHeight = 0, width, height, xScale, yScale;
 	public GraphArea(){
-		super(Color.white, Color.black, new Dimension(400, 300));
+		super(Color.white, Color.black, new Dimension(400, 400));
 	}
 	@Override
 	protected void paintComponent(Graphics g){
@@ -28,7 +28,10 @@ public class GraphArea extends BaseComponent{
 		
 		if(graphWidth == 0 || graphHeight == 0) return;
 		
-		int width = getWidth() - (KEY_WIDTH + AXIS_WIDTH), height = getHeight() - (AXIS_WIDTH + KEY_WIDTH), xScale = width / graphWidth, yScale = height / graphHeight;
+		width = getWidth() - (KEY_WIDTH + AXIS_WIDTH);
+		height = getHeight() - (AXIS_WIDTH + KEY_WIDTH);
+		xScale = width / graphWidth;
+		yScale = height / graphHeight;
 		Analytics.log().write("Scale: " + xScale + "x" + yScale, Log.DEBUG);
 		
 		//Draw vertical key
@@ -41,38 +44,64 @@ public class GraphArea extends BaseComponent{
 		}
 		//Draw grid rows
 		for(int y=0; y<=graphHeight; ++y){
-			g.drawLine(KEY_WIDTH + AXIS_WIDTH, y * yScale, getWidth(), y * yScale);
+			g.drawLine(KEY_WIDTH + AXIS_WIDTH, y * yScale + AXIS_WIDTH / 2, getWidth(), y * yScale + AXIS_WIDTH / 2);
 		}
 		//Draw grid columns
 		for(int x=0; x<=graphWidth; ++x){
 			g.drawLine(KEY_WIDTH + AXIS_WIDTH + x * xScale, 0, KEY_WIDTH + AXIS_WIDTH + x * xScale, height);
 		}
-		
-		g.setColor(Color.yellow.darker());
+		drawPoints(wins, Color.yellow, g);
+		drawPoints(dWins, Color.orange.darker(), g);
+		drawPoints(losses, Color.red, g);
+		drawPoints(dLosses, Color.red.darker(), g);
+	}
+	private void drawPoints(List<Point> points, Color c, Graphics g){
+		g.setColor(c);
 		Point prev = points.get(0);
 		for(Point p : points){
-			for(int i=-4; i<=0; i++){
-				g.drawLine(prev.x * xScale + KEY_WIDTH + AXIS_WIDTH, height - prev.y * yScale + i, p.x * xScale + KEY_WIDTH + AXIS_WIDTH, height - p.y * yScale + i);
+			for(int i=0; i<2; i++){
+				g.drawLine(prev.x * xScale + KEY_WIDTH + AXIS_WIDTH, height - prev.y * yScale - i, p.x * xScale + KEY_WIDTH + AXIS_WIDTH, height - p.y * yScale - i);
 			}
 			prev = p;
 		}
 	}
 	protected void showData(List<String> data){
-		points.clear();
+		wins.clear();
+		dWins.clear();
+		losses.clear();
+		dLosses.clear();
 		
 		graphWidth = data.size();
 		graphHeight = 0;
+		int numWins = 0, numLosses = 0;
 		for(String event : data)
-			if(event.equals("W")) graphHeight++;
+			if(event.equals("W")) numWins++;
+			else if(event.equals("L")) numLosses++;
+		graphHeight = Math.max(numWins, numLosses);
 		
+		createData(wins, data, "W");
+		createData(losses, data, "L");
+		createDerivative(wins, dWins);
+		createDerivative(losses, dLosses);
+		
+		repaint();
+	}
+	private void createData(List<Point> points, List<String> data, String key){
+		points.clear();
 		points.add(new Point(0, 0));
 		int x = 0, y = 0;
 		for(String event : data){
 			x++;
-			if(event.equals("W")) y++;
+			if(event.equals(key)) y++;
 			points.add(new Point(x, y));
-			Analytics.log().write("(" + x + ", " + y + ")", Log.DEBUG);
 		}
-		repaint();
+	}
+	private void createDerivative(List<Point> data, List<Point> derivative){
+		derivative.clear();
+		Point prev = data.get(0);
+		for(Point p : data){
+			derivative.add(new Point(p.x, p.y - prev.y));
+			prev = p;
+		}
 	}
 }

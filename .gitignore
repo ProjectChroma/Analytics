@@ -9,3 +9,6 @@ misc/
 
 #Logs
 logs/
+
+#Sample data
+data-*/

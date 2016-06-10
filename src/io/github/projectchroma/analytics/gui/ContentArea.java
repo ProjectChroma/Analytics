@@ -19,7 +19,6 @@ public class ContentArea extends BaseComponent{
 	private static final long serialVersionUID = 1L;
 	private JTextField pathField = new JTextField();
 	private JFileChooser fileSelector = new JFileChooser(new File("").getAbsoluteFile());
-	private File gameDir;
 	public ContentArea(){
 		super(new GridBagLayout(), Color.white, Color.black);
 		fileSelector.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
@@ -62,32 +61,23 @@ public class ContentArea extends BaseComponent{
 				Analytics.log().write("Browsing", Log.DEBUG);
 				int code = fileSelector.showOpenDialog(ContentArea.this);
 				if(code == JFileChooser.APPROVE_OPTION){
-					gameDir = fileSelector.getSelectedFile();
-					Analytics.log().write("Selected file " + gameDir, Log.DEBUG);
-					pathField.setText(gameDir.toString());
+					File dir = fileSelector.getSelectedFile();
+					Analytics.log().write("Selected file " + dir, Log.DEBUG);
+					pathField.setText(dir.toString());
+					
+					File dataDir = new File(dir, "data" + File.separatorChar + "analytics");
+					if(dataDir.exists()){
+						Analytics.log().write("File " + dataDir + " found", Log.ERROR);
+						StatsView.instance.loadData(dataDir.listFiles((dir_, name) -> name.matches("\\d+\\.dat")));
+					}else if(dir.exists()){//In case they selected they analytics folder itself
+						Analytics.log().write("Backup file " + dir + " found", Log.ERROR);
+						StatsView.instance.loadData(dir.listFiles((dir_, name) -> name.matches("\\d+\\.dat")));
+					}else{
+						Analytics.log().write("Selected file " + dir + " does not exist", Log.ERROR);
+					}
 				}else{
 					Analytics.log().write("Browsing canceled", Log.DEBUG);
 				}
-			}
-		});
-		
-		c.gridx++;
-		c.weightx = 0.5;
-		JButton loadButton = new JButton("Load Data");
-		add(loadButton, c);
-		loadButton.addMouseListener(new MouseAdapter(){
-			public void mouseReleased(MouseEvent e){
-				Analytics.log().write("Loading data", Log.DEBUG);
-				if(gameDir == null){
-					Analytics.log().write("No game dir selected", Log.ERROR);
-					return;
-				}
-				File dataDir = new File(gameDir, "data" + File.separatorChar + "analytics");
-				if(!dataDir.exists()){
-					Analytics.log().write("Unable to load data: analytics data folder " + dataDir + " does not exist", Log.ERROR);
-					return;
-				}
-				StatsView.instance.loadData(dataDir.listFiles((dir, name) -> name.matches("\\d+\\.dat")));
 			}
 		});
 		

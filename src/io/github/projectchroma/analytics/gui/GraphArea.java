@@ -13,7 +13,7 @@ import io.github.projectchroma.launcher.gui.util.BaseComponent;
 
 public class GraphArea extends BaseComponent{
 	private static final long serialVersionUID = 1L;
-	private static final int AXIS_WIDTH = 5, KEY_WIDTH = 50;
+	private static final int AXIS_WIDTH = 5, KEY_WIDTH = 50, STROKE_WIDTH = 3;
 	private List<Point> wins = new ArrayList<>(), dWins = new ArrayList<>(), losses = new ArrayList<>(), dLosses = new ArrayList<>();
 	private int graphWidth = 0, graphHeight = 0, width, height, xScale, yScale;
 	public GraphArea(){
@@ -59,8 +59,8 @@ public class GraphArea extends BaseComponent{
 		g.setColor(c);
 		Point prev = points.get(0);
 		for(Point p : points){
-			for(int i=0; i<2; i++){
-				g.drawLine(prev.x * xScale + KEY_WIDTH + AXIS_WIDTH, height - prev.y * yScale - i, p.x * xScale + KEY_WIDTH + AXIS_WIDTH, height - p.y * yScale - i);
+			for(int i=-STROKE_WIDTH/2; i<=STROKE_WIDTH/2; i++){
+				g.drawLine(prev.x * xScale + KEY_WIDTH + AXIS_WIDTH, height - prev.y * yScale + i, p.x * xScale + KEY_WIDTH + AXIS_WIDTH, height - p.y * yScale + i);
 			}
 			prev = p;
 		}
@@ -103,5 +103,6 @@ public class GraphArea extends BaseComponent{
 			derivative.add(new Point(p.x, p.y - prev.y));
 			prev = p;
 		}
+		derivative.remove(0);
 	}
 }

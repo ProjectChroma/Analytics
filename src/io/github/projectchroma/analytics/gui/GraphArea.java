@@ -9,7 +9,7 @@ import java.util.List;
 
 import io.github.projectchroma.analytics.Analytics;
 import io.github.projectchroma.analytics.Log;
-import io.github.projectchroma.launcher.gui.util.BaseComponent;
+import io.github.projectchroma.analytics.gui.util.BaseComponent;
 
 public class GraphArea extends BaseComponent{
 	private static final long serialVersionUID = 1L;
@@ -36,7 +36,7 @@ public class GraphArea extends BaseComponent{
 		
 		//Draw vertical key
 		for(int y=0; y<=graphHeight; ++y){
-			g.drawString(y + "", KEY_WIDTH/2, (graphHeight - y) * yScale + getFontMetrics(getFont()).getHeight()/2);
+			g.drawString(y + "", KEY_WIDTH/2, (graphHeight - y) * yScale + getFontMetrics(getFont()).getHeight()/2 + AXIS_WIDTH);
 		}
 		//Draw horizontal key
 		for(int x=0; x<=graphWidth; ++x){

@@ -13,7 +13,7 @@ import javax.swing.JTextField;
 
 import io.github.projectchroma.analytics.Analytics;
 import io.github.projectchroma.analytics.Log;
-import io.github.projectchroma.launcher.gui.util.BaseComponent;
+import io.github.projectchroma.analytics.gui.util.BaseComponent;
 
 public class ContentArea extends BaseComponent{
 	private static final long serialVersionUID = 1L;

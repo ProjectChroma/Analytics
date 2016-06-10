@@ -1,4 +1,4 @@
-package io.github.projectchroma.launcher.gui.util;
+package io.github.projectchroma.analytics.gui.util;
 
 import java.awt.Color;
 import java.awt.Dimension;

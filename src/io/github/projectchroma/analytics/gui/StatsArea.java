@@ -19,14 +19,14 @@ import io.github.projectchroma.analytics.gui.util.BaseComponent;
 import io.github.projectchroma.analytics.gui.util.CustomButton;
 import io.github.projectchroma.analytics.gui.util.CustomTextField;
 
-public class StatsView extends BaseComponent{
+public class StatsArea extends BaseComponent{
 	private static final long serialVersionUID = 1L;
-	public static final StatsView instance = new StatsView();
+	public static final StatsArea instance = new StatsArea();
 	private final CustomTextField title;
-	private final GraphArea graph;
+	private final Graph graph;
 	private Map<Integer, List<String>> data = new HashMap<>();
 	private int maxLevel = 0, currentLevel = 0;
-	private StatsView(){
+	private StatsArea(){
 		super(new GridBagLayout());
 		GridBagConstraints c = new GridBagConstraints();
 		c.anchor = GridBagConstraints.NORTHEAST;
@@ -56,7 +56,7 @@ public class StatsView extends BaseComponent{
 		c.weighty = 4;
 		c.gridwidth = 3;
 		c.anchor = GridBagConstraints.NORTH;
-		add(graph = new GraphArea(), c);
+		add(graph = new Graph(), c);
 	}
 	public void loadData(File[] files){
 		data.clear();

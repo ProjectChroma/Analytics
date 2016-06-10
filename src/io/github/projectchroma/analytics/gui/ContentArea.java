@@ -68,10 +68,10 @@ public class ContentArea extends BaseComponent{
 					File dataDir = new File(dir, "data" + File.separatorChar + "analytics");
 					if(dataDir.exists()){
 						Analytics.log().write("File " + dataDir + " found", Log.ERROR);
-						StatsView.instance.loadData(dataDir.listFiles((dir_, name) -> name.matches("\\d+\\.dat")));
+						StatsArea.instance.loadData(dataDir.listFiles((dir_, name) -> name.matches("\\d+\\.dat")));
 					}else if(dir.exists()){//In case they selected they analytics folder itself
 						Analytics.log().write("Backup file " + dir + " found", Log.ERROR);
-						StatsView.instance.loadData(dir.listFiles((dir_, name) -> name.matches("\\d+\\.dat")));
+						StatsArea.instance.loadData(dir.listFiles((dir_, name) -> name.matches("\\d+\\.dat")));
 					}else{
 						Analytics.log().write("Selected file " + dir + " does not exist", Log.ERROR);
 					}
@@ -86,6 +86,6 @@ public class ContentArea extends BaseComponent{
 		c.gridwidth = 3;
 		c.weightx = 1;
 		c.weighty = 24;
-		add(StatsView.instance, c);
+		add(StatsArea.instance, c);
 	}
 }

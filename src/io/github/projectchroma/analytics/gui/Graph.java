@@ -11,12 +11,12 @@ import io.github.projectchroma.analytics.Analytics;
 import io.github.projectchroma.analytics.Log;
 import io.github.projectchroma.analytics.gui.util.BaseComponent;
 
-public class GraphArea extends BaseComponent{
+public class Graph extends BaseComponent{
 	private static final long serialVersionUID = 1L;
 	private static final int AXIS_WIDTH = 5, KEY_WIDTH = 50, STROKE_WIDTH = 3;
 	private List<Point> wins = new ArrayList<>(), dWins = new ArrayList<>(), losses = new ArrayList<>(), dLosses = new ArrayList<>();
 	private int graphWidth = 0, graphHeight = 0, width, height, xScale, yScale;
-	public GraphArea(){
+	public Graph(){
 		super(Color.white, Color.black, new Dimension(400, 400));
 	}
 	@Override
@@ -43,13 +43,10 @@ public class GraphArea extends BaseComponent{
 			g.drawString(x + "", x * xScale - getFontMetrics(getFont()).stringWidth(x + "")/2 + KEY_WIDTH, getHeight() - (KEY_WIDTH + getFontMetrics(getFont()).getHeight()) / 2);
 		}
 		//Draw grid rows
-		for(int y=0; y<=graphHeight; ++y){
-			g.drawLine(KEY_WIDTH + AXIS_WIDTH, y * yScale + AXIS_WIDTH / 2, getWidth(), y * yScale + AXIS_WIDTH / 2);
-		}
+		for(int y=0; y<=graphHeight; ++y) drawLine(0, y, graphWidth, y, g);
 		//Draw grid columns
-		for(int x=0; x<=graphWidth; ++x){
-			g.drawLine(KEY_WIDTH + AXIS_WIDTH + x * xScale, 0, KEY_WIDTH + AXIS_WIDTH + x * xScale, height);
-		}
+		for(int x=0; x<=graphWidth; ++x) drawLine(x, 0, x, graphHeight, g);
+		
 		drawPoints(wins, Color.yellow, g);
 		drawPoints(dWins, Color.orange.darker(), g);
 		drawPoints(losses, Color.red, g);
@@ -59,11 +56,17 @@ public class GraphArea extends BaseComponent{
 		g.setColor(c);
 		Point prev = points.get(0);
 		for(Point p : points){
-			for(int i=-STROKE_WIDTH/2; i<=STROKE_WIDTH/2; i++){
-				g.drawLine(prev.x * xScale + KEY_WIDTH + AXIS_WIDTH, height - prev.y * yScale + i, p.x * xScale + KEY_WIDTH + AXIS_WIDTH, height - p.y * yScale + i);
-			}
+			drawLine(prev.x, prev.y, p.x, p.y, STROKE_WIDTH, g);
 			prev = p;
 		}
+	}
+	private void drawLine(int x1, int y1, int x2, int y2, Graphics g){drawLine(x1, y1, x2, y2, 1, g);}
+	private void drawLine(int x1, int y1, int x2, int y2, int stroke, Graphics g){
+		int rx1 = x1 * xScale + (KEY_WIDTH + AXIS_WIDTH),
+				rx2 = x2 * xScale + (KEY_WIDTH + AXIS_WIDTH);
+		int ry1 = height - y1 * yScale, ry2 = height - y2 * yScale;
+		for(int i=-stroke/2; i<=stroke/2; i++)
+			g.drawLine(rx1, ry1 + i, rx2, ry2 + i);
 	}
 	protected void showData(List<String> data){
 		wins.clear();

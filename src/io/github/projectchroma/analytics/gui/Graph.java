@@ -42,6 +42,7 @@ public class Graph extends BaseComponent{
 		for(int x=0; x<=graphWidth; ++x){
 			g.drawString(x + "", x * xScale - getFontMetrics(getFont()).stringWidth(x + "")/2 + KEY_WIDTH, getHeight() - (KEY_WIDTH + getFontMetrics(getFont()).getHeight()) / 2);
 		}
+		g.setColor(Color.lightGray);
 		//Draw grid rows
 		for(int y=0; y<=graphHeight; ++y) drawLine(0, y, graphWidth, y, g);
 		//Draw grid columns

@@ -2,7 +2,7 @@ package io.github.projectchroma.analytics.gui;
 
 import java.awt.Font;
 import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
+import java.awt.Point;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
@@ -15,48 +15,85 @@ import javax.swing.JTextField;
 
 import io.github.projectchroma.analytics.Analytics;
 import io.github.projectchroma.analytics.Log;
-import io.github.projectchroma.analytics.gui.util.BaseComponent;
+import io.github.projectchroma.analytics.gui.util.BaseGridBagComponent;
 import io.github.projectchroma.analytics.gui.util.CustomButton;
 import io.github.projectchroma.analytics.gui.util.CustomTextField;
 
-public class StatsArea extends BaseComponent{
+public class StatsArea extends BaseGridBagComponent{
 	private static final long serialVersionUID = 1L;
 	public static final StatsArea instance = new StatsArea();
-	private final CustomTextField title;
+	private final CustomTextField title, wpr, lpr, dwpr, dlpr;
 	private final Graph graph;
 	private Map<Integer, List<String>> data = new HashMap<>();
 	private int maxLevel = 0, currentLevel = 0;
 	private StatsArea(){
-		super(new GridBagLayout());
-		GridBagConstraints c = new GridBagConstraints();
-		c.anchor = GridBagConstraints.NORTHEAST;
-		c.fill = GridBagConstraints.VERTICAL;
-		c.gridwidth = c.gridheight = 1;
-		c.gridx = c.gridy = 0;
-		c.weightx = c.weighty = 1;
+		c.weightx = 0;
+		c.anchor = GridBagConstraints.NORTHWEST;
+		c.fill = GridBagConstraints.BOTH;
 		
 		Font buttonFont = Analytics.getFont(24);
-		add(new CustomButton("<<", buttonFont, () -> {showLevel(currentLevel - 1);}), c);
+		add(new CustomButton("<<", buttonFont, () -> {showLevel(currentLevel - 1);}));
 		
-		c.gridx++;
+		right();
 		c.weightx = 6;
-		c.anchor = GridBagConstraints.NORTH;
-		c.fill = GridBagConstraints.BOTH;
-		add(title = new CustomTextField("Level Data", Analytics.getFont(40F), false), c);
-		title.setHorizontalAlignment(JTextField.CENTER);
-		
-		c.gridx++;
-		c.weightx = 1;
-		c.anchor = GridBagConstraints.NORTHWEST;
-		c.fill = GridBagConstraints.VERTICAL;
-		add(new CustomButton(">>", buttonFont, () -> {showLevel(currentLevel + 1);}), c);
-		
-		c.gridx = 0;
-		c.gridy++;
-		c.weighty = 4;
 		c.gridwidth = 3;
 		c.anchor = GridBagConstraints.NORTH;
-		add(graph = new Graph(), c);
+		add(title = new CustomTextField("Level Data", Analytics.getFont(40), false));
+		title.setHorizontalAlignment(JTextField.CENTER);
+		
+		right();
+		c.weightx = 0;
+		c.gridwidth = 1;
+		c.anchor = GridBagConstraints.NORTHEAST;
+		c.fill = GridBagConstraints.VERTICAL;
+		add(new CustomButton(">>", buttonFont, () -> {showLevel(currentLevel + 1);}));
+		
+		nextRow(1);
+		c.weighty = 4;
+		c.gridwidth = 2;
+		c.gridheight = 5;
+		c.anchor = GridBagConstraints.NORTH;
+		add(graph = new Graph());
+		
+		right();
+		c.weightx = 1;
+		c.weighty = 1;
+		c.gridwidth = 2;
+		c.gridheight = 1;
+		c.anchor = GridBagConstraints.NORTHWEST;
+		c.fill = GridBagConstraints.BOTH;
+		add(new CustomTextField("Statistics", Analytics.getFont(36), false));
+		
+		Font font = Analytics.getFont(24);
+		c.gridwidth = 1;
+		
+		nextRow(3);
+		c.weightx = 1;
+		add(new CustomTextField("WPR", font, false));
+		c.weightx = 10;
+		right();
+		add(wpr = new CustomTextField("", font, false));
+		
+		nextRow(3);
+		c.weightx = 1;
+		add(new CustomTextField("LPR", font, false));
+		c.weightx = 10;
+		right();
+		add(lpr = new CustomTextField("", font, false));
+		
+		nextRow(3);
+		c.weightx = 1;
+		add(new CustomTextField("dWPR", font, false));
+		c.weightx = 10;
+		right();
+		add(dwpr = new CustomTextField("", font, false));
+		
+		nextRow(3);
+		c.weightx = 1;
+		add(new CustomTextField("dLPR", font, false));
+		c.weightx = 10;
+		right();
+		add(dlpr = new CustomTextField("", font, false));
 	}
 	public void loadData(File[] files){
 		data.clear();
@@ -89,6 +126,15 @@ public class StatsArea extends BaseComponent{
 		title.setText("Level " + level);
 		title.repaint();
 		graph.showData(data.get(level));
+		writeDerivativeStat(graph.wins, wpr);
+		writeDerivativeStat(graph.losses, lpr);
+		writeDerivativeStat(graph.dWins, dwpr);
+		writeDerivativeStat(graph.dLosses, dlpr);
 		this.currentLevel = level;
+	}
+	protected void writeDerivativeStat(List<Point> data, JTextField text){
+		Point first = data.get(0), last = data.get(data.size()-1);
+		double dy = last.y - first.y, dx = last.x - first.x;
+		text.setText(String.format("%.5f", dy / dx));
 	}
 }

@@ -14,10 +14,10 @@ import io.github.projectchroma.analytics.gui.util.BaseComponent;
 public class Graph extends BaseComponent{
 	private static final long serialVersionUID = 1L;
 	private static final int AXIS_WIDTH = 5, KEY_WIDTH = 50, STROKE_WIDTH = 3;
-	private List<Point> wins = new ArrayList<>(), dWins = new ArrayList<>(), losses = new ArrayList<>(), dLosses = new ArrayList<>();
+	protected List<Point> wins = new ArrayList<>(), dWins = new ArrayList<>(), losses = new ArrayList<>(), dLosses = new ArrayList<>();
 	private int graphWidth = 0, graphHeight = 0, width, height, xScale, yScale;
 	public Graph(){
-		super(Color.white, Color.black, new Dimension(400, 400));
+		super(new Dimension(400, 400));
 	}
 	@Override
 	protected void paintComponent(Graphics g){
@@ -102,6 +102,7 @@ public class Graph extends BaseComponent{
 	}
 	private void createDerivative(List<Point> data, List<Point> derivative){
 		derivative.clear();
+		derivative.add(new Point(0, 0));
 		Point prev = data.get(0);
 		for(Point p : data){
 			derivative.add(new Point(p.x, p.y - prev.y));

@@ -31,7 +31,6 @@ public class BaseGridBagComponent extends BaseComponent{
 	protected void nextRow(int startX){down(); c.gridx = startX;}
 	public Component add(Component comp){
 		add(comp, c);
-		System.out.printf("(%d, %d) <%d, %d>: %s%n", c.gridx, c.gridy, c.gridwidth, c.gridheight, toString(comp));
 		return comp;
 	}
 	private String toString(Component comp){
